@@ -22,11 +22,8 @@ HAL_StatusTypeDef ROTOR_Reset()
 
     uint8_t data[] = {command_byte};
 
-    return HAL_I2C_Master_Transmit(rotor_i2c,
-                                   rotor_write_addr,
-                                   data,
-                                   sizeof(data) / sizeof(uint8_t),
-                                   max_request_delay);
+    return HAL_I2C_Master_Transmit(
+        rotor_i2c, 0x28 << 1, data, 1, max_request_delay);
 }
 
 enum ROTOR_CalibrationStatus
@@ -81,48 +78,76 @@ ROTOR_GetMovementState(enum ROTOR_MovementStatus* movement_status)
                             max_request_delay);
 }
 
-HAL_StatusTypeDef ROTOR_GetCurrentLocation(uint16_t* current_position)
+void ROTOR_WaitForStop()
+{
+    enum ROTOR_MovementStatus status = MovingClockwise;
+    while (status != Stopped)
+    {
+        ROTOR_GetMovementState(&status);
+        HAL_Delay(50);
+    }
+}
+
+HAL_StatusTypeDef ROTOR_GetCurrentLocation(uint8_t* current_position)
 {
     static const uint8_t command_byte = 0x04;
+
 
     if (current_position == NULL)
     {
         return HAL_ERROR;
     }
 
+
+    ROTOR_WaitForStop();
+
     return HAL_I2C_Mem_Read(rotor_i2c,
                             rotor_read_addr,
                             command_byte,
                             1,
-                            (uint8_t*)current_position,
+                            current_position,
                             2,
                             max_request_delay);
 }
 
 
-HAL_StatusTypeDef ROTOR_GoToAbsoluteLocation(uint16_t new_absolute_position)
+HAL_StatusTypeDef ROTOR_GoToAbsoluteLocation(uint8_t msb_pos_byte,
+                                             uint8_t lsb_pos_byte)
 {
     static const uint8_t command_byte = 0x05;
 
-    uint8_t data[] = {command_byte,
-                      ((uint8_t*)new_absolute_position)[0],
-                      ((uint8_t*)new_absolute_position)[1]};
+    ROTOR_WaitForStop();
+
+    uint8_t data[] = {command_byte, msb_pos_byte, lsb_pos_byte};
 
     return HAL_I2C_Master_Transmit(
         rotor_i2c, rotor_write_addr, data, 3, max_request_delay);
 }
 
-
-HAL_StatusTypeDef ROTOR_GoToRelativeLocation(uint16_t relative_position)
+enum ROTOR_RotationDirection
 {
-    static const uint8_t command_byte = 0x06;
+    Clockwise = 0x00,
+    Anticlockwise = 0x01
+};
 
-    uint8_t data[] = {command_byte,
-                      ((uint8_t*)relative_position)[0],
-                      ((uint8_t*)relative_position)[1]};
+HAL_StatusTypeDef
+ROTOR_GoToRelativeLocation(enum ROTOR_RotationDirection direction,
+                           uint8_t msb_pos_byte,
+                           uint8_t lsb_pos_byte)
+{
+    static const uint8_t command_byte = 0x40;
+
+    ROTOR_WaitForStop();
+
+    //    uint8_t bytes[2];
+    //    bytes[0] = (relative_position >> 8);
+    //    bytes[1] = relative_position & 0xFF;
+
+
+    uint8_t data[] = {command_byte, direction, msb_pos_byte, lsb_pos_byte};
 
     return HAL_I2C_Master_Transmit(
-        rotor_i2c, rotor_write_addr, data, 3, max_request_delay);
+        rotor_i2c, rotor_write_addr, data, 4, max_request_delay);
 }
 
 #endif /* INC_ROTOR_DRIVER_H_ */
