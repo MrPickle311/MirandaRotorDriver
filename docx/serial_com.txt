@@ -1,10 +1,10 @@
-What		CMD											RESP
-Reset		STX 0 ETX										STX u8_isok ETX
-GetCalibState	STX 1 ETX										STX u8_isok u8_cal_state ETX
-GetMoveState	STX 2 ETX										STX u8_isok u8_mov_state ETX
-GetCurrLocat	STX 3 ETX										STX u8_isok u8_msb_curr_pos u8_lsb_curr_pos ETX
-GoToAbsPos	STX 4 u8_msb_abs_pos u8_lsb_abs_pos ETX							STX u8_isok ETX
-GoToRelPos	STX 5 u8_msb_abs_pos u8_lsb_abs_pos u8_direction ETX					STX u8_isok ETX
+What			CMD													RESP
+Reset			STX 0 ETX												STX u8_isok ETX
+GetCalibState	STX 1 ETX												STX u8_isok u8_cal_state ETX
+GetMoveState	STX 2 ETX												STX u8_isok u8_mov_state ETX
+GetCurrLocat	STX 3 ETX												STX u8_isok u8_msb_curr_pos u8_lsb_curr_pos ETX
+GoToAbsPos		STX 4 u8_msb_abs_pos u8_lsb_abs_pos ETX							STX u8_isok ETX
+GoToRelPos		STX 5 u8_msb_abs_pos u8_lsb_abs_pos u8_direction ETX					STX u8_isok ETX
 
 u8_isok : 0 - ok , 1 - err
 

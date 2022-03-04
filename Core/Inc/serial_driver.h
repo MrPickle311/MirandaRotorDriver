@@ -82,7 +82,7 @@ void SERIAL_ServiceCommandIndicator()
 
 void SERIAL_TryResetRotor()
 {
-    HAL_StatusTypeDef status = HAL_OK; // ROTOR_Reset();
+    HAL_StatusTypeDef status = ROTOR_Reset();
 
     if (status == HAL_OK)
     {

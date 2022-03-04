@@ -99,33 +99,8 @@ int main(void)
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
 
-    //    HAL_StatusTypeDef ret;
-
-    //    ROTOR_Setup(&hi2c1, 300);
-    //  ret = ROTOR_Reset();
-
-    //    ret = ROTOR_GoToRelativeLocation(Clockwise, 0x2AAA);
-    //  enum ROTOR_CalibrationStatus status;
-    //  ret = ROTOR_GetCalibrationState(&status);
-
-    //    uint8_t current_pos[] = {0, 0};
-
-    //    ret = ROTOR_GetCurrentLocation(current_pos);
-
-    //    if (ret == HAL_OK) /* No ACK Received At That Address */
-    //    {
-    //        //      HAL_UART_Transmit(&huart3, "OK\r\n", 2, HAL_MAX_DELAY);
-    //        HAL_UART_Transmit(&huart3, &current_pos[0], 1, HAL_MAX_DELAY);
-    //        HAL_UART_Transmit(&huart3, &current_pos[1], 1, HAL_MAX_DELAY);
-    //    }
-    //    else
-    //    {
-    //        //        HAL_GPIO_WritePin(GPIOE, GPIO_PIN_1, GPIO_PIN_RESET);
-    //        //      HAL_UART_Transmit(&huart3, "BAD\r\n", 5, HAL_MAX_DELAY);
-    //    }
-
+    ROTOR_Setup(&hi2c1, 300);
     SERIAL_WaitForCommandIndicator();
-
 
     while (1)
     {

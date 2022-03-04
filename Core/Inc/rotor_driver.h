@@ -84,7 +84,6 @@ void ROTOR_WaitForStop()
     while (status != Stopped)
     {
         ROTOR_GetMovementState(&status);
-        HAL_Delay(50);
     }
 }
 
@@ -97,7 +96,6 @@ HAL_StatusTypeDef ROTOR_GetCurrentLocation(uint8_t* current_position)
     {
         return HAL_ERROR;
     }
-
 
     ROTOR_WaitForStop();
 
@@ -131,18 +129,13 @@ enum ROTOR_RotationDirection
 };
 
 HAL_StatusTypeDef
-ROTOR_GoToRelativeLocation(enum ROTOR_RotationDirection direction,
-                           uint8_t msb_pos_byte,
-                           uint8_t lsb_pos_byte)
+ROTOR_GoToRelativeLocation(uint8_t msb_pos_byte,
+                           uint8_t lsb_pos_byte,
+						   enum ROTOR_RotationDirection direction)
 {
     static const uint8_t command_byte = 0x40;
 
     ROTOR_WaitForStop();
-
-    //    uint8_t bytes[2];
-    //    bytes[0] = (relative_position >> 8);
-    //    bytes[1] = relative_position & 0xFF;
-
 
     uint8_t data[] = {command_byte, direction, msb_pos_byte, lsb_pos_byte};
 
