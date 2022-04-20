@@ -18,12 +18,23 @@ void ROTOR_Setup(I2C_HandleTypeDef* i2c_bus, uint16_t request_delay)
 
 HAL_StatusTypeDef ROTOR_Reset()
 {
-    static const uint8_t command_byte = 0x01;
+    static const uint8_t command_byte_1 = 0x01;
+    static const uint8_t command_byte_2 = 0x1C;
 
-    uint8_t data[] = {command_byte};
+    uint8_t data[] = {command_byte_1};
 
-    return HAL_I2C_Master_Transmit(
+    //reset
+    HAL_StatusTypeDef result = HAL_I2C_Master_Transmit(
         rotor_i2c, 0x28 << 1, data, 1, max_request_delay);
+
+    data[0] = command_byte_2;
+
+    HAL_Delay(2000);
+
+    //wake up
+    result = HAL_I2C_Master_Transmit(
+            rotor_i2c, 0x28 << 1, data, 1, max_request_delay);
+    return result;
 }
 
 enum ROTOR_CalibrationStatus
